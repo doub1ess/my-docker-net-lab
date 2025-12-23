@@ -1,0 +1,114 @@
+version: "3"
+
+services:
+  redis_a:
+    image: redis:7-alpine
+    container_name: redis_a
+
+    volumes:
+      - redis_a_data:/data
+
+    restart: unless-stopped
+    networks:
+      - localnet_1
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+
+  redis_b:
+    image: redis:7-alpine
+    container_name: redis_b
+
+    volumes:
+      - redis_b_data:/data
+
+    restart: unless-stopped
+    networks:
+      - localnet_2
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+  
+  app_a:
+    build: .
+    container_name: app_a
+
+    environment:
+      APP_TMP_DATA: /tmp
+      REDIS_HOST: redis_a
+      REDIS_PORT: "6379"
+
+    depends_on:
+      redis_a:
+        condition: service_healthy
+
+    restart: unless-stopped
+    networks: 
+      - localnet_1
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+
+  app_b:
+    build: .
+    container_name: app_b
+
+    environment:
+      APP_TMP_DATA: /tmp
+      REDIS_HOST: redis_b
+      REDIS_PORT: "6379"
+
+    depends_on:
+      redis_b:
+        condition: service_healthy
+
+    restart: unless-stopped
+    networks: 
+      - localnet_2
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+
+  reverse_proxy:
+    image: nginx:stable
+    container_name: reverse_proxy
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+    networks:
+      - localnet_1
+      - localnet_2
+
+volumes:
+  redis_a_data:
+  redis_b_data:
+
+
+networks:
+  localnet_1:
+    name: localnet_1
+    driver: bridge
+
+  localnet_2:
+    name: localnet_2
+    driver: bridge
