@@ -19,4 +19,4 @@ EXPOSE 8080
 
 USER doubless:app
 
-ENTRYPOINT ["python", "app.py"]
+ENTRYPOINT ["python", "app/app.py"]

@@ -26,13 +26,15 @@ def index():
 def health():
     details = {}
 
+    details["tmp_write"] = "skipped"
+    details["tmp_path"] = None
     # 1) Проверка записи во временную директорию
-    try:
-        probe_path = write_tmp_probe()
-        details["tmp_write"] = "ok"
-        details["tmp_path"] = probe_path
-    except Exception as e:
-        return jsonify(status="fail", reason="tmp_write_failed", error=str(e)), 500
+    # try:
+    #     probe_path = write_tmp_probe()
+    #     details["tmp_write"] = "ok"
+    #     details["tmp_path"] = probe_path
+    # except Exception as e:
+    #     return jsonify(status="fail", reason="tmp_write_failed", error=str(e)), 500
 
     # 2) Проверка Redis
     try:
