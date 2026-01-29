@@ -23,8 +23,8 @@
 ## Быстрый старт
 
 Из корня проекта 
-docker compose up -d --build
-docker compose ps
+`docker compose up -d --build`
+`docker compose ps`
 
 
 ## Как обращаться к сервисам
@@ -41,10 +41,10 @@ docker compose ps
 ### 1) Проверка “жив ли сервис”
 
 - A:
-curl -i http://localhost:8080/a/
+`curl -i http://localhost:8080/a/`
 
 - B:
-curl -i http://localhost:8080/b/
+`curl -i http://localhost:8080/b/`
 
 Ожидается ответ:
 OK
@@ -52,10 +52,10 @@ OK
 ### 2) Healthcheck
 
 - A:
-curl -i http://localhost:8080/a/health
+`curl -i http://localhost:8080/a/health`
 
 - B:
-curl -i http://localhost:8080/b/health
+`curl -i http://localhost:8080/b/health`
 
 
 Ожидается JSON вида:
@@ -71,20 +71,20 @@ curl -i http://localhost:8080/b/health
 Записать значение (ключ = `test`, значение = тело запроса):
 
 - В A:
-curl -i -X POST http://localhost:8080/a/cache/test -d "helloA"
+`curl -i -X POST http://localhost:8080/a/cache/test -d "helloA"`
 
 
 - В B:
-curl -i -X POST http://localhost:8080/b/cache/test -d "helloB"
+`curl -i -X POST http://localhost:8080/b/cache/test -d "helloB"`
 
 
 Прочитать значение:
 
 - Из A:
-curl -i http://localhost:8080/a/cache/test
+`curl -i http://localhost:8080/a/cache/test`
 
 - Из B:
-curl -i http://localhost:8080/b/cache/test
+`curl -i http://localhost:8080/b/cache/test`
 
 
 ## Как проверить изоляцию (идея двух сетей)
@@ -95,13 +95,13 @@ curl -i http://localhost:8080/b/cache/test
 ## Полезные команды
 
 Логи:
-docker compose logs -f app_a
-docker compose logs -f app_b
-docker compose logs -f reverse_proxy
+`docker compose logs -f app_a`
+`docker compose logs -f app_b`
+`docker compose logs -f reverse_proxy`
 
 Зайти в контейнер:
-docker compose exec app_a sh
-docker compose exec reverse_proxy sh
+`docker compose exec app_a sh`
+`docker compose exec reverse_proxy sh`
 
 Проверить, что Redis жив внутри контейнера:
-docker compose exec redis_a redis-cli ping
+`docker compose exec redis_a redis-cli ping`
